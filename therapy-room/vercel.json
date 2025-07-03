@@ -1,0 +1,11 @@
+{
+  "buildCommand": "prisma generate && next build",
+  "functions": {
+    "src/app/api/**": {
+      "maxDuration": 30
+    }
+  },
+  "env": {
+    "NEXT_PUBLIC_APP_NAME": "TherapyRoom"
+  }
+}
