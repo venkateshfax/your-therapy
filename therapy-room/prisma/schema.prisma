@@ -1,0 +1,119 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  password     String
+  avatar       String?
+  phone        String?
+  dateOfBirth  DateTime?
+  emergencyContact String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  // User preferences
+  notifications Boolean @default(true)
+  reminderFrequency String @default("weekly") // daily, weekly, monthly
+  
+  // Therapy sessions
+  sessions     TherapySession[]
+  followUps    FollowUp[]
+  
+  @@map("users")
+}
+
+model TherapySession {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  title        String?
+  description  String?
+  status       SessionStatus @default(SCHEDULED)
+  duration     Int      @default(3600) // Duration in seconds (1 hour default)
+  startTime    DateTime
+  endTime      DateTime?
+  
+  // Session metadata
+  mood         String?
+  goals        String?
+  notes        String?
+  aiSummary    String?
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  // Related messages in this session
+  messages     Message[]
+  
+  @@map("therapy_sessions")
+}
+
+model Message {
+  id               String   @id @default(cuid())
+  sessionId        String
+  session          TherapySession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  content          String
+  isFromUser       Boolean
+  timestamp        DateTime @default(now())
+  
+  // AI analysis
+  sentiment        String?
+  emotionalTone    String?
+  keyTopics        String?
+  
+  @@map("messages")
+}
+
+model FollowUp {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  type         FollowUpType
+  status       FollowUpStatus @default(PENDING)
+  scheduledFor DateTime
+  sentAt       DateTime?
+  
+  title        String
+  content      String
+  emailSent    Boolean @default(false)
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  @@map("follow_ups")
+}
+
+enum SessionStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum FollowUpType {
+  CHECK_IN
+  REMINDER
+  RESOURCES
+  APPOINTMENT_REMINDER
+}
+
+enum FollowUpStatus {
+  PENDING
+  SENT
+  RESPONDED
+  CANCELLED
+}
