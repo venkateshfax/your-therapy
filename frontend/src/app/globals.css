@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  body {
+    @apply bg-gray-50 text-gray-900;
+  }
+}
+
+@layer components {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .gradient-bg {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+  
+  .chat-message {
+    @apply p-4 rounded-lg shadow-sm transition-all duration-200 hover:shadow-md;
+  }
+  
+  .chat-message.user {
+    @apply bg-primary-500 text-white ml-8;
+  }
+  
+  .chat-message.system {
+    @apply bg-gray-200 text-gray-800 mr-8;
+  }
+  
+  .chat-message.tool {
+    @apply bg-green-100 text-green-800 mr-8 border-l-4 border-green-500;
+  }
+  
+  .tool-card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200;
+  }
+  
+  .metric-card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-4;
+  }
+}
